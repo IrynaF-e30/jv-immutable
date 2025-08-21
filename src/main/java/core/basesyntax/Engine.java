@@ -2,19 +2,13 @@ package core.basesyntax;
 
 import java.util.Objects;
 
-public class Engine {
+public class Engine implements Cloneable {
     private int horsePower;
     private String manufacturer;
 
     public Engine(int horsePower, String manufacturer) {
         this.horsePower = horsePower;
         this.manufacturer = manufacturer;
-    }
-
-    // Копіювальний конструктор
-    public Engine(Engine other) {
-        this.horsePower = other.horsePower;
-        this.manufacturer = other.manufacturer;
     }
 
     public int getHorsePower() {
@@ -33,8 +27,13 @@ public class Engine {
         this.manufacturer = manufacturer;
     }
 
+    @Override
     public Engine clone() {
-        return new Engine(this);
+        try {
+            return (Engine) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
     }
 
     @Override
@@ -49,15 +48,8 @@ public class Engine {
     public int hashCode() {
         return Objects.hash(horsePower, manufacturer);
     }
-
-    @Override
-    public String toString() {
-        return "Engine{" +
-                "horsePower=" + horsePower +
-                ", manufacturer='" + manufacturer + '\'' +
-                '}';
-    }
 }
+
 
 
 

@@ -6,72 +6,67 @@ import java.util.Objects;
 
 public record Car(int year, String color, List<Wheel> wheels, Engine engine) {
     public Car(int year, String color, List<Wheel> wheels, Engine engine) {
+        if (wheels == null) {
+            throw new NullPointerException("Wheels cannot be null");
+        }
         this.year = year;
         this.color = color;
 
-        // Deep copy коліс
+        // deep copy wheels
         List<Wheel> copy = new ArrayList<>();
         for (Wheel w : wheels) {
-            copy.add(new Wheel(w.getRadius()));
+            copy.add(w.clone());
         }
-        this.wheels = copy;
+        this.wheels = new ArrayList<>(copy); // внутрішня копія
 
-        // Deep copy двигуна
-        this.engine = engine == null ? null : new Engine(engine.getHorsePower(), engine.getManufacturer());
+        // deep copy engine (може бути null)
+        this.engine = (engine == null) ? null : engine.clone();
     }
 
-    // Повертаємо mutable копію списку, щоб зовнішні add/remove не впливали на Car
     @Override
     public List<Wheel> wheels() {
-        List<Wheel> cloned = new ArrayList<>();
+        List<Wheel> copy = new ArrayList<>();
         for (Wheel w : wheels) {
-            cloned.add(new Wheel(w.getRadius()));
+            copy.add(w.clone());
         }
-        return cloned;
+        return copy; // повертаємо копію, яка mutable
     }
 
     @Override
     public Engine engine() {
-        return engine == null ? null : new Engine(engine.getHorsePower(), engine.getManufacturer());
-    }
-
-    public Car changeColor(String newColor) {
-        return new Car(year, newColor, wheels, engine);
+        return (engine == null) ? null : engine.clone();
     }
 
     public Car changeEngine(Engine newEngine) {
         return new Car(year, color, wheels, newEngine);
     }
 
+    public Car changeColor(String newColor) {
+        return new Car(year, newColor, wheels, engine);
+    }
+
     public Car addWheel(Wheel newWheel) {
-        List<Wheel> newWheels = new ArrayList<>();
+        List<Wheel> copy = new ArrayList<>();
         for (Wheel w : wheels) {
-            newWheels.add(new Wheel(w.getRadius()));
+            copy.add(w.clone());
         }
-        newWheels.add(new Wheel(newWheel.getRadius()));
-        return new Car(year, color, newWheels, engine);
+        copy.add(newWheel.clone());
+        return new Car(year, color, copy, engine);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Car car)) return false;
-        return year == car.year &&
-                Objects.equals(color, car.color) &&
-                Objects.equals(wheels, car.wheels) &&
-                Objects.equals(engine, car.engine);
+        return year == car.year
+                && Objects.equals(color, car.color)
+                && Objects.equals(wheels, car.wheels)
+                && Objects.equals(engine, car.engine);
     }
 
-    @Override
-    public String toString() {
-        return "Car{" +
-                "year=" + year +
-                ", color='" + color + '\'' +
-                ", wheels=" + wheels +
-                ", engine=" + engine +
-                '}';
-    }
 }
+
+
 
 
 
