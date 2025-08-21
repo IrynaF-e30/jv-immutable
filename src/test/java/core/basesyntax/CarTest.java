@@ -24,7 +24,7 @@ public class CarTest {
 
     @Test
     public void getEngine_checkEngineAfterAddingToCar() {
-        Engine actual = testCar.getEngine();
+        Engine actual = testCar.engine();
         Assert.assertTrue("Engines " + actual + " and " + testEngine + " must be equal.\n",
             Objects.equals(actual, testEngine));
         Assert.assertEquals("Engines must not refer to the same object.\n", true,
@@ -35,7 +35,7 @@ public class CarTest {
     public void set_isEngineInCarChanged() {
         testEngine.setHorsePower(90);
         testEngine.setManufacturer("new maker");
-        Engine engine = testCar.getEngine();
+        Engine engine = testCar.engine();
         Assert.assertEquals("Horse power should not be the same after setting it on immutable object.\n",
             true, testEngine.getHorsePower() != engine.getHorsePower());
         Assert.assertEquals("Manufacturers should not be the same after setting it on immutable object.\n",
@@ -46,7 +46,7 @@ public class CarTest {
     public void carConstructor_checkWheelsAfterAddingToCar() {
         List<Wheel> expected = List.of(new Wheel(20), new Wheel(13));
         Car car = new Car(1999, null, expected, testEngine);
-        List<Wheel> actual = car.getWheels();
+        List<Wheel> actual = car.wheels();
         Assert.assertTrue("Lists of wheels " + expected + " and " + actual +
                 " should be equal after constructor initialisation.\n",
             Objects.equals(expected, actual));
@@ -63,7 +63,7 @@ public class CarTest {
         List<Wheel> wheels = List.of(expected);
         Car car = new Car(1999, null, wheels, testEngine);
         expected.setRadius(14);
-        Wheel actual = car.getWheels().get(0);
+        Wheel actual = car.wheels().get(0);
         Assert.assertEquals("Immutable objects should not be changed from outside.\n",
             true, !expected.equals(actual));
     }
@@ -72,7 +72,7 @@ public class CarTest {
     public void carConstructor_checkColorAfterAddingToCar() {
         String expected = "red";
         Car car = new Car(1999, expected, Collections.emptyList(), testEngine);
-        String actual = car.getColor();
+        String actual = car.color();
         Assert.assertEquals("Colors should be the same after constructor initialisation.\n", expected, actual);
         expected = "blue";
         Assert.assertEquals("Colors should not refer to the same object.\n", true,
@@ -82,7 +82,7 @@ public class CarTest {
     @Test
     public void getEngine_checkEngineForNull() {
         Car car = new Car(0, "red", Collections.emptyList(), null);
-        Engine engine = car.getEngine();
+        Engine engine = car.engine();
         Assert.assertEquals("Engines should be null after constructor initialisation.\n",
             true, engine == null);
     }
@@ -108,7 +108,7 @@ public class CarTest {
     @Test
     public void addWheel_isCarTheSameAfterAddingWheel() {
         Car actualCar = testCar.addWheel(new Wheel(90));
-        int actualSizeDelta = actualCar.getWheels().size() - testCar.getWheels().size();
+        int actualSizeDelta = actualCar.wheels().size() - testCar.wheels().size();
         Assert.assertEquals("After calling method addWheel returned car wheels'"
             + " size should be increased by 1.\n", 1, actualSizeDelta);
         Assert.assertEquals("Cars should not refer to the same object after adding wheels.\n",
@@ -121,7 +121,7 @@ public class CarTest {
         Car car = new Car(1999, "red", wheels, testEngine);
         Car changedCar = car.addWheel(new Wheel(90));
         Assert.assertEquals("New car's wheels quantity should be 1 after adding a new wheel.\n",
-            1, changedCar.getWheels().size());
+            1, changedCar.wheels().size());
         Assert.assertEquals("Initial wheels list's size should remain the same.\n", 0, wheels.size());
     }
 
@@ -129,14 +129,14 @@ public class CarTest {
     public void addWheel_isWheelAddedWithoutCreatingVariable() {
         testCar.addWheel(new Wheel(90));
         Assert.assertEquals("Wheels quantity should change after adding a new wheel.\n",
-            true, testCar.getWheels().size() != 1);
+            true, testCar.wheels().size() != 1);
     }
 
     @Test
     public void changeEngine_isEngineChangedWithoutCreatingVariable() {
         Engine expected = new Engine(90, "new maker");
         testCar.changeEngine(expected);
-        Engine actual = testCar.getEngine();
+        Engine actual = testCar.engine();
         Assert.assertEquals("Сar should not be changed after changeEngine method.\n",
             true, !expected.equals(actual));
     }
@@ -147,14 +147,14 @@ public class CarTest {
         Car car = new Car(1999, expected, Collections.emptyList(), testEngine);
         Car changedCar = car.changeColor("blue");
         Assert.assertEquals("Color should be changed after changeColor method.\n",
-            true, !expected.equals(changedCar.getColor()));
+            true, !expected.equals(changedCar.color()));
     }
 
     @Test
     public void changeColor_isColorChangedWithoutCreatingVariable() {
         String expected = "green";
         testCar.changeColor(expected);
-        String actual = testCar.getColor();
+        String actual = testCar.color();
         Assert.assertEquals("You should return a copy in your getters.\n",
             true, !expected.equals(actual));
     }
@@ -163,7 +163,7 @@ public class CarTest {
     public void classCar_getYear() {
         int expected = 80;
         Car car = new Car(expected, "red", Collections.emptyList(), testEngine);
-        int actual = car.getYear();
+        int actual = car.year();
         Assert.assertEquals("Wrong getter for year.\n", expected, actual);
     }
 
@@ -282,17 +282,17 @@ public class CarTest {
     public void classEngine_checkCloneIsReturnedInGetEngine() {
         Engine originalEngine = testEngine.clone();
         Car car = new Car(1995, "Blue", List.of(new Wheel(90)), testEngine);
-        car.getEngine().setHorsePower(0);
+        car.engine().setHorsePower(0);
         Assert.assertEquals("You shouldn't be able to change car's engine with getEngine() method",
-            originalEngine, car.getEngine());
+            originalEngine, car.engine());
     }
 
     @Test
     public void classWheel_checkListCloneIsReturnedInGetWheels() {
         Car car = new Car(1995, "Blue", List.of(new Wheel(90)), testEngine);
-        car.getWheels().add(new Wheel(50));
+        car.wheels().add(new Wheel(50));
         Assert.assertEquals("You shouldn't be able to change car's wheels with getWheel method",
-            1, car.getWheels().size());
+            1, car.wheels().size());
     }
 
     @Test
@@ -300,8 +300,8 @@ public class CarTest {
         int initialWheelRadius = 90;
         Car car = new Car(1995, "Blue", List.of(new Wheel(initialWheelRadius)), testEngine);
         int newRadius = 1;
-        car.getWheels().get(0).setRadius(newRadius);
+        car.wheels().get(0).setRadius(newRadius);
         Assert.assertEquals("You shouldn't be able to change car's wheels parameters with "
-            + "getWheels method", initialWheelRadius, car.getWheels().get(0).getRadius());
+            + "getWheels method", initialWheelRadius, car.wheels().get(0).getRadius());
     }
 }
